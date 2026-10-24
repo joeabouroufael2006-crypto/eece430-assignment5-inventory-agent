@@ -1,89 +1,93 @@
-# EECE430 Assignment 5 — AI Inventory Agent in Docker
+# EECE430 Assignment 5 - AI Inventory Agent in Docker
 
-This version is based on **your uploaded `EECE430_Assignment3_Final(1).zip`**.
-Your original inventory CRUD tools, price editing, VAT calculation, Gemini agent,
-chat UI, and sample Chocolate bar migration are preserved.
+A Dockerized version of the original Django Inventory Agent from Assignment 3.
+It keeps the inventory tools, price updates, VAT calculation, Gemini chat,
+HTML interface and sample Chocolate bar migration.
 
-## Professor's requirements
-1. Create a Docker image for the AI Agent application.
-2. Push the application into a new GitHub repository.
-3. Invite `am38@aub.edu.lb` as a collaborator.
-4. Run the Docker image downloaded from GitHub.
+## Verified results - 24 October 2026
 
-## How to finish on your Mac (recommended cloud build)
+- The dedicated public repository contains the source and Docker configuration.
+- GitHub Actions built and published images for Linux AMD64 and ARM64.
+- The instructor invitation to **Ali-Moukallid** (am38@aub.edu.lb) is pending acceptance.
+- The GitHub-published ARM64 image runs in Docker Desktop on the Mac.
+- The homepage returns HTTP 200 and all 3 Django tests pass.
+- Live Gemini chat returned **8.25** for 3 chocolate bars with 10% VAT:
+  subtotal 7.50 plus VAT 0.75. The sample stock remains 10 units.
+- The image does not contain a `.env` file or Gemini API key.
 
-Docker Desktop must be open and running. You have already installed `gh` and
-signed into GitHub in Assignment 4. Download this ZIP to your Mac Desktop,
-unzip it, and run:
+Successful original image build:
+https://github.com/joeabouroufael2006-crypto/eece430-assignment5-inventory-agent/actions/runs/40077926645
 
-```bash
-cd ~/Desktop
-unzip -o EECE430_Assignment5_FINAL_FIXED.zip
-cd EECE430_Assignment5_FINAL
-bash finish_assignment5_mac.sh
-```
+Export of that published image:
+https://github.com/joeabouroufael2006-crypto/eece430-assignment5-inventory-agent/actions/runs/40078359503
 
-The script:
-- Reuses your existing **private** `~/Desktop/EECE430_Assignment5_Corrected/.env`
-  if you still have it; otherwise it asks for the Gemini key silently.
-- Creates and uploads the source to a new **public** repo named
-  `eece430-assignment5-inventory-agent`.
-- Sends an invite to `Ali-Moukallid` (verify this is the GitHub account corresponding
-  to your instructor's email `am38@aub.edu.lb`).
-- Lets **GitHub Actions** build and publish the Docker image in GitHub Container Registry.
-  This avoids the PyPI pip-install failure on your Mac during `docker build`.
-- Pulls the published image to your Mac and runs it on port 8000.
-- Runs the Django tests for price updates and VAT without using Gemini API credits.
-- Writes `SUBMIT_THIS_LINK.txt` and `DOCKER_RUN_PROOF.txt` **only when verified**.
+## Standard Docker build and run
 
-After completion, visit http://127.0.0.1:8000/ and ask:
-
-> What is the cost of 3 chocolate bars after adding 10% VAT?
-
-With a new inventory, the sample item has price 2.50 and the answer is 8.25.
-A quote does not reduce stock. If you retained data from earlier runs, amounts
-may differ because the inventory database is persistent.
-
-### If the cloud Docker image is not public
-
-In GitHub open your profile > **Packages** > the package > **Package settings** >
-**Change visibility** > **Public**. Then run:
+Docker Desktop must be running. Clone this repository and create a private `.env`
+using `.env.example`; enter your own Gemini API key there.
 
 ```bash
-cd ~/Desktop/EECE430_Assignment5_FINAL
-bash run_from_github.sh
+docker build -t inventory-agent .
+docker run -d --name inventory-agent \
+  -p 127.0.0.1:8000:8000 --env-file .env \
+  --mount type=volume,source=eece430-assignment5-db,target=/data \
+  inventory-agent
 ```
 
-### If Docker cannot download the image
+Open http://127.0.0.1:8000/.
 
-Your earlier error `lookup registry-1.docker.io: no such host` was a DNS/network
-problem. Switching Wi-Fi to a hotspot or correcting Docker Desktop networking may
-be required. GitHub Actions can still create the image even if your Mac cannot.
+## Run the image from GitHub
 
-### Optional local build (not required if GitHub Actions succeeds)
+The image is hosted at:
+
+```text
+ghcr.io/joeabouroufael2006-crypto/eece430-assignment5-inventory-agent:latest
+```
+
+With access to the registry, use `bash run_from_github.sh`. If the package is
+private, your GitHub account needs package read access and Docker must be signed
+in. The existing publishing workflow uses its own temporary GitHub token.
+
+### Downloadable image for registry connection failures
+
+On this Mac, a direct pull failed because DNS could not resolve `ghcr.io`.
+The **Download published Docker image** workflow pulls the published image on
+GitHub's runner and exports it as a downloadable archive. This route was verified
+on the Mac with the actual published image.
+
+1. Open the successful export run linked above and download its
+   `inventory-agent-arm64` artifact while it is retained.
+2. Unzip the artifact. It contains `inventory-agent-arm64.tar.gz`,
+   `SHA256SUMS`, and `image-details.txt`.
+3. Check the archive and load it:
 
 ```bash
-bash start_mac.sh
+shasum -a 256 -c SHA256SUMS
+bash run_downloaded_image.sh \
+  /path/to/inventory-agent-arm64.tar.gz /path/to/private/.env
 ```
 
-This command writes the full build log to `docker-build-last.log`. If `pip`
-fails, inspect that log to distinguish DNS/timeouts from true Python dependency
-conflicts. The earlier `exit code: 1` by itself does not identify the cause.
+The export targets Apple Silicon (ARM64). An Intel machine should use the AMD64
+image from the registry or build the Dockerfile locally. GitHub artifacts expire
+after 30 days; rerun the export workflow for another downloadable copy.
 
-## Technical details
-- Base image: Python 3.13 slim (Debian Bookworm).
-- Django 6.1.2, google-genai 2.23.0, python-dotenv 1.x.
-- Database persists in named Docker volume `eece430-assignment5-db`.
-- The image contains **no Gemini API key**; the private `.env` is passed at runtime.
-- GitHub Actions builds multiarchitecture Linux images (AMD64 and ARM64).
-- GitHub repository contains the original `chat/`, `config/`, templates,
-  migration files and screenshot, plus Docker and automation files.
-- Designed for a local coursework demo, not for public deployment.
+## Verify and restart
 
-## What has and has not been verified here
+```bash
+docker exec eece430-assignment5-from-github python manage.py check
+docker exec eece430-assignment5-from-github python manage.py test chat --noinput
+docker start eece430-assignment5-from-github
+```
 
-Project source syntax, shell scripts, ZIP contents and VAT arithmetic were checked.
-Docker and pip package installation could not be performed in the authoring
-environment, which has no container engine or working PyPI network access.
-Do not claim a successful GitHub build or local Docker run until the setup script
-completes on your Mac.
+Ask: `What is the cost of 3 chocolate bars after adding 10% VAT?`
+A fresh sample inventory returns 8.25. A quote does not reduce stock. Persistent
+inventory changes can alter later quotes.
+
+The database is saved in the named Docker volume `eece430-assignment5-db`.
+Stopping a container preserves it. Keep `.env` private; pass it at runtime.
+This project uses Django's development server for the local coursework demo.
+
+## Technology
+
+Python 3.13, Django 6.1.2, google-genai 2.23.0, python-dotenv 1.x and SQLite.
+The entrypoint applies migrations before starting the app on port 8000.

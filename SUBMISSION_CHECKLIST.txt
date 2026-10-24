@@ -1,11 +1,17 @@
-EECE430 Assignment 5 — quick checklist
-[ ] Download/unzip the final corrected project
-[ ] Docker Desktop is running
-[ ] Run: bash finish_assignment5_mac.sh
-[ ] New repository eece430-assignment5-inventory-agent is public
-[ ] Professor invitation exists in Settings > Collaborators
-[ ] GitHub Actions workflow passes (green)
-[ ] GHCR Docker image exists (set Public if needed)
-[ ] Docker image pulled from GitHub runs at http://127.0.0.1:8000/
-[ ] Test chat: 3 chocolate bars + 10% VAT = 8.25 for sample inventory
-[ ] Upload SUBMIT_THIS_LINK.txt (or repository link) for Moodle submission
+EECE430 Assignment 5 - verified 24 October 2026
+
+[x] AI Inventory Agent packaged as a Docker image
+[x] Source uploaded to the dedicated public GitHub repository
+[x] GitHub Actions image build succeeded for AMD64 and ARM64
+[x] Instructor invitation sent to Ali-Moukallid; pending acceptance
+[x] Published image downloaded from GitHub and loaded into Docker
+[x] Container running at http://127.0.0.1:8000/
+[x] Homepage returns HTTP 200
+[x] Django system checks pass and all 3 tests pass
+[x] Live AI chat returns 8.25 for sample quote with 10% VAT
+[x] No Gemini API key included in the image or submission files
+
+Repository to submit:
+https://github.com/joeabouroufael2006-crypto/eece430-assignment5-inventory-agent
+
+The Moodle submission itself has not been made.
