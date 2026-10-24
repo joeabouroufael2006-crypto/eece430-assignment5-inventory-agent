@@ -1,0 +1,11 @@
+EECE430 Assignment 5 — quick checklist
+[ ] Download/unzip the final corrected project
+[ ] Docker Desktop is running
+[ ] Run: bash finish_assignment5_mac.sh
+[ ] New repository eece430-assignment5-inventory-agent is public
+[ ] Professor invitation exists in Settings > Collaborators
+[ ] GitHub Actions workflow passes (green)
+[ ] GHCR Docker image exists (set Public if needed)
+[ ] Docker image pulled from GitHub runs at http://127.0.0.1:8000/
+[ ] Test chat: 3 chocolate bars + 10% VAT = 8.25 for sample inventory
+[ ] Upload SUBMIT_THIS_LINK.txt (or repository link) for Moodle submission

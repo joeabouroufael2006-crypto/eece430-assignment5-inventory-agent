@@ -1,0 +1,4 @@
+# Versions verified against Python 3.13. Pin Django to a published release.
+Django==6.1.2
+google-genai==2.23.0
+python-dotenv>=1.0,<2.0

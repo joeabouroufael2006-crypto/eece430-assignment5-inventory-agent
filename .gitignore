@@ -1,0 +1,15 @@
+# Never publish secrets, local runtime files or Docker/Python caches.
+.env
+.env.*
+!.env.example
+.venv/
+venv/
+db.sqlite3
+*.sqlite3
+__pycache__/
+*.py[cod]
+.DS_Store
+.pytest_cache/
+*.log
+SUBMIT_THIS_LINK.txt
+DOCKER_RUN_PROOF.txt
